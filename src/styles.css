@@ -32,6 +32,10 @@ h1 {
 
 .game-controls {
   text-align: center;
+  background-color: black;
+  padding: 40px;
+  width: 500px;
+  height: 40px; 
 }
 
 .start-button {
@@ -142,9 +146,4 @@ h1 {
 
 .unclickable {
   pointer-events: none;
-}
-
-.pad-box {
-  background-color: black;
-  padding: 40px;
 }
