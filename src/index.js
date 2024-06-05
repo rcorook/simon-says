@@ -80,7 +80,6 @@ startButton.addEventListener("click", startButtonHandler);
  *
  */
 function startButtonHandler() {
-  console.log("startButtonHandler is called")
   maxRoundCount = setLevel(level);
   roundCount++;
   startButton.classList.add("hidden");
@@ -112,7 +111,6 @@ function padHandler(event) {
   if (!color) return;
   const pad = pads.find(pad => pad.color === color);
   pad.sound.play();
-  console.log(`Presses color is: ${color}`)
   checkPress(color);
   
   return color;
@@ -162,17 +160,13 @@ function setLevel(level = 1) {
 function determineRounds(level) {
   switch(level) {
     case 2:
-      // return 14;
-      return 2;
+      return 14;
     case 3:
-      // return 20;
-      return 3;
+      return 20;
     case 4:
-      // return 31;
-      return 4;
+      return 31;
     default:
-      // return 8;
-      return 1;
+      return 8;
   }
 }
 
@@ -277,7 +271,6 @@ function activatePads(sequence) {
   statusSpan.textContent = "The computer's turn..." ;
   heading.textContent = `Level ${level}: Round ${roundCount} of ${maxRoundCount}`;
   const randomColor = getRandomItem(pads).color; 
-  console.log(`Random color picked: ${randomColor}`)
   computerSequence.push(randomColor);
   console.log(`Computer sequence is : ${computerSequence}`)
   activatePads(computerSequence); 
@@ -296,7 +289,8 @@ function activatePads(sequence) {
 function playHumanTurn() {
   padContainer.classList.remove("unclickable");
   remainingPresses = computerSequence.length - playerSequence.length;
-  statusSpan.textContent = `Player's turn: ${remainingPresses} press(es) left`;
+  let press = remainingPresses > 1? "presses" : "press";
+  statusSpan.textContent = `Player's turn: ${remainingPresses} ${press} left`;
 }
 
 /**
@@ -323,7 +317,7 @@ function playHumanTurn() {
  */
 function checkPress(color) {
   playerSequence.push(color);
-  console.log(`Player sequence: ${playerSequence}`)
+  console.log(`Player sequence is: ${playerSequence}`)
   const index = playerSequence.length - 1;
   remainingPresses = computerSequence.length - playerSequence.length;
   statusSpan.textContent = `Player's turn: ${remainingPresses} press(es) left`;
