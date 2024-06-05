@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", function () {
 /**
  * DOM SELECTORS
  */
@@ -80,6 +81,7 @@ startButton.addEventListener("click", startButtonHandler);
  *
  */
 function startButtonHandler() {
+  console.log("startButtonHandler is called")
   setLevel();
   roundCount++;
   startButton.classList.add("hidden");
@@ -109,8 +111,10 @@ function startButtonHandler() {
 function padHandler(event) {
   const { color } = event.target.dataset;
   if (!color) return;
-
-  // TODO: Write your code here.
+  const pad = pads.find(pad => pad.color === color);
+  pad.sound.play();
+  checkPress(color);
+  
   return color;
 }
 
@@ -158,12 +162,16 @@ function setLevel(level = 1) {
 function determineRounds(level) {
   switch(level) {
     case 2:
+      console.log("rounds set to 14")
       return 14;
     case 3:
+      console.log("rounds set to 20")
       return 20;
     case 4:
+      console.log("rounds set to 31")
       return 31;
     default:
+      console.log("rounds set to 8")
       return 8;
   }
 }
@@ -184,16 +192,16 @@ function determineRounds(level) {
  * getRandomItem([1, 2, 3, 4]) //> returns 1
  */
 function getRandomItem(collection) {
-  // if (collection.length === 0) return null;
-  // const randomIndex = Math.floor(Math.random() * collection.length);
-  // return collection[randomIndex];
+  if (collection.length === 0) return null;
+  const randomIndex = Math.floor(Math.random() * collection.length);
+  return collection[randomIndex];
 }
 
 /**
  * Sets the status text of a given HTML element with a given a message
  */
 function setText(element, text) {
-  // TODO: Write your code here.
+  element.textContent = text;
   return element;
 }
 
@@ -211,7 +219,12 @@ function setText(element, text) {
  */
 
 function activatePad(color) {
-  // TODO: Write your code here.
+  const pad = pads.find(pad => pad.color === color);
+  pad.selector.classList.add("activated");
+  pad.sound.play();
+  setTimeout(() => {
+    pad.selector.classList.remove("activated");
+  }, 500)
 }
 
 /**
@@ -229,7 +242,12 @@ function activatePad(color) {
  */
 
 function activatePads(sequence) {
-  // TODO: Write your code here.
+  sequence.forEach( (color, index) => {
+    
+    setTimeout(() => {
+        activatePad(color)
+    }, (index + 1) * 600)
+  });
 }
 
 /**
@@ -256,7 +274,14 @@ function activatePads(sequence) {
  * sequence.
  */
  function playComputerTurn() {
-  // TODO: Write your code here.
+  const status = "The computer's turn..." 
+  padContainer.classList.add("unclickable");
+  statusSpan.textContent = status;
+  heading.textContent = `Round ${roundCount} of ${maxRoundCount}`;
+  const randomColor = getRandomItem(pads).color; 
+  computerSequence.push(randomColor);
+  console.log(`${computerSequence}`)
+  activatePads(computerSequence); 
 
   setTimeout(() => playHumanTurn(roundCount), roundCount * 600 + 1000); // 5
 }
@@ -269,7 +294,8 @@ function activatePads(sequence) {
  * 2. Display a status message showing the player how many presses are left in the round
  */
 function playHumanTurn() {
-  // TODO: Write your code here.
+  padContainer.classList.remove("unclickable");
+  statusSpan.textContent = `Round ${roundCount} of ${maxRoundCount}`;
 }
 
 /**
@@ -295,7 +321,16 @@ function playHumanTurn() {
  *
  */
 function checkPress(color) {
-  // TODO: Write your code here.
+  const index = playerSequence.push(color) - 1;
+  const remainingPresses = computerSequence.length - playerSequence.length;
+  statusSpan.textContent = `Round ${roundCount} of ${maxRoundCount}`;
+  if (computerSequence[index] !== playerSequence[index]) {
+    resetGame("Game over!");
+    return;
+  }
+  if (remainingPresses === 0) {
+    checkRound();
+  }
 }
 
 /**
@@ -314,7 +349,15 @@ function checkPress(color) {
  */
 
 function checkRound() {
-  // TODO: Write your code here.
+  if (playerSequence.length === computerSequence.length) {
+    resetGame();
+  }
+  roundCount++;
+  playerSequence = [];
+  statusSpan.textContent = "Nice! Keep going!";
+  setTimeout(() => {
+    playComputerTurn();
+  }, 1000);
 }
 
 /**
@@ -362,3 +405,4 @@ window.playHumanTurn = playHumanTurn;
 window.checkPress = checkPress;
 window.checkRound = checkRound;
 window.resetGame = resetGame;
+});
